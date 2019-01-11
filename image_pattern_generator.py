@@ -1,7 +1,7 @@
 """
 Implements solution to task defined in
 https://gist.github.com/rantsi/8cb2d5b6df398977b69c84c98de2c2b0
-:notes: Assignmetn is very clear but there is a problem in examples...
+:notes: Assignment is very clear but there is a problem in examples...
 :author: Ilmari Marttila
 :email: ilmari.marttila@student.tut.fi
 :date: 13.12.2018
