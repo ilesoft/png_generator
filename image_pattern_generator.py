@@ -2,9 +2,6 @@
 Implements solution to task defined in
 https://gist.github.com/rantsi/8cb2d5b6df398977b69c84c98de2c2b0
 :notes: Assignment is very clear but there is a problem in examples...
-:author: Ilmari Marttila
-:email: ilmari.marttila@student.tut.fi
-:date: 13.12.2018
 """
 from zlib import compress
 from binascii import crc32
@@ -79,7 +76,6 @@ def png_creator(matrix):
 def file_writer(image_bytes):
     """
     Writes image file to current working directory
-    :param image_bytes:
     """
     while True:
         file_name = input("Give name for image file: ")
@@ -95,18 +91,14 @@ def file_writer(image_bytes):
             if x == 'Y' or x == 'y':
                 break
         else:
-            break
+            continue
     with open(file_name, 'bw') as file:
         file.write(image_bytes)
-
-    print("New PNG image is now in executing directory.")
 
 
 def increase(original_matrix, multiplier):
     """
     Multiplyes the sie of the image by parameter multiplyer
-    :param original_matrix:
-    :param multiplier:
     :return: new, bigger matrix
     """
     new_matrix = []
@@ -114,10 +106,10 @@ def increase(original_matrix, multiplier):
         new_row = []
         for pixel in original_row:
             # Multiply the count of pixels
-            for _ in range(multiplier):
+            for i in range(multiplier):
                 new_row.append(pixel)
 
-        for _ in range(multiplier):
+        for i in range(multiplier):
             new_matrix.append(new_row)
 
     return new_matrix
@@ -126,66 +118,36 @@ def increase(original_matrix, multiplier):
 def generate_image(seed_row, row_count):
     """
     Generates image based on seed row
-    :param seed_row:
-    :param row_count: How many lines will be generated
     :return: picture as a matrix
     """
-    matrix = [[0]*len(seed_row) for _ in range(row_count + 1)]
+    matrix = [[0] * len(seed_row) for i in range(row_count + 1)]
     matrix[0] = seed_row
-
-    rule_selection = input("Follow the rule defined by assignment or "
-                           "example.\nInput A to assigment style or"
-                           " empty to example style")
 
     for row in range(1, row_count + 1):
         for pixel in range(len(matrix[0])):
             # Pixels is the same color than the pixel above
             matrix[row][pixel] = matrix[row - 1][pixel]
 
-            if rule_selection in ['a', 'A', "assigment"]:
-                # Check the rule defined by assignment.
-                # I can't believe that this is the way you want me to do this.
 
-                same_color = 0
-                different_colot = 0
-                for x in [-2, -1, 1, 2]:
-                    try:
-                        if pixel + x < 0:
-                            continue
-                        if matrix[row-1][pixel + x] == matrix[row - 1][pixel]:
-                            same_color += 1
-                        else:
-                            different_colot += 1
-                    except IndexError:
-                        pass
-                if same_color > different_colot:
-                    # Color have to change
-                    if matrix[row - 1][pixel] == 1:
-                        matrix[row][pixel] = 0
+            ones = 0
+            zeros = 0
+            for x in [-2, -1, 1, 2]:
+                try:
+                    if pixel + x < 0:
+                        continue
+                    if matrix[row - 1][pixel + x] == 1:
+                        ones += 1
                     else:
-                        matrix[row][pixel] = 1
-            else:
-                # Check the rule defined by examples
-                # This makes sense much more than the other way to do this
-                ones = 0
-                zeros = 0
-                for x in [-2, -1, 1, 2]:
-                    try:
-                        if pixel + x < 0:
-                            continue
-                        if matrix[row - 1][pixel + x] == 1:
-                            ones += 1
-                        else:
-                            zeros += 1
-                    except IndexError:
-                        pass
+                        zeros += 1
+                except IndexError:
+                    pass
 
-                if ones > zeros:
-                    # Color have to change
-                    if matrix[row - 1][pixel] == 1:
-                        matrix[row][pixel] = 0
-                    else:
-                        matrix[row][pixel] = 1
+            if ones > zeros:
+                # Color have to change
+                if matrix[row - 1][pixel] == 1:
+                    matrix[row][pixel] = 0
+                else:
+                    matrix[row][pixel] = 1
 
     # Remove the first row (seed)
     matrix.pop(0)
@@ -198,56 +160,37 @@ def generate_image(seed_row, row_count):
 
     return matrix
 
-
-def check_input(input_list):
-    """
-    Checks (roughly) that input is valid. Can leak exception.
-    :param input_list:
-    :return: False if iput is invalid otherwise True
-    """
-    if len(input_list) > 256:
-        print("Too long input")
-        return False
-    elif len(input_list) < 2:
-        print("Too short input")
-        return False
-    elif input_list[0] < 0 or input_list[0] > 255:
-        print("Too many rows to generate")
-        return False
-    # check right values
-    for pixel in input_list[1:]:
-        if int(pixel) != 0 and int(pixel) != 1:
-            print("Wrong colors.")
-            return False
-    return True
-
-
 def main():
-    # Ask input
-    print("Type input formatted as:\n"
-          "<number_of_rows>;<color_of_pixel_1>;<color_of_pixel_2>"
-          ";...;<color_of_pixel_n>;\n"
-          "Use ones to represent white and zeros to black. "
+    print("Use ones to represent white and zeros to black. "
           "Don't use another colors.\n"
           "Don't give reference data or number of pixels bigger "
           "than 255 pixels/rows.")
     while True:
         try:
-            input_str = input('>')
-            input_list = input_str.split(';')
-            input_list = list(map(int, input_list))
-            if check_input(input_list):
-                break
-        except TypeError as ex:
-            print(ex)
-        except ValueError as ex:
-            print(ex)
-        print("Try again")
+            amount_of_rows = int(input('Type wanted amount of rows: '))
+            if amount_of_rows < 0 or amount_of_rows > 255:
+                raise
+            break
+        except:
+            print("Try again")
 
-    matrix = generate_image(input_list[1:], input_list[0])
+    while True:
+        try:
+            pixels = list(map(int, input('Type pixels(ones and zeros without spaces): ')))
+            for pixel in pixels:
+                if pixel != 0 and pixel != 1:
+                    print("Ones and zeros without spaces!")
+                    raise
+            if len(pixels) > 255:
+                raise
+            break
+        except:
+            print("Try again")
+
+    matrix = generate_image(pixels, amount_of_rows)
 
     # Find out how big image should be
-    multiplier = min(int(255 / input_list[0]), int(255 / len(input_list[1:])))
+    multiplier = min(int(255 / amount_of_rows), int(255 / len(pixels)))
 
     # Make it as big as possible
     matrix2 = increase(matrix, multiplier)
