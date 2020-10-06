@@ -90,8 +90,10 @@ def file_writer(image_bytes):
                       "Type Y to override or N to choose new file name: ")
             if x == 'Y' or x == 'y':
                 break
+            else:
+                continue
         else:
-            continue
+            break
     with open(file_name, 'bw') as file:
         file.write(image_bytes)
 
@@ -127,7 +129,6 @@ def generate_image(seed_row, row_count):
         for pixel in range(len(matrix[0])):
             # Pixels is the same color than the pixel above
             matrix[row][pixel] = matrix[row - 1][pixel]
-
 
             ones = 0
             zeros = 0
