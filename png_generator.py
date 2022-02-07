@@ -1,7 +1,6 @@
 """
 Implements solution to task defined in
 https://gist.github.com/rantsi/8cb2d5b6df398977b69c84c98de2c2b0
-:notes: Assignment is very clear but there is a problem in examples...
 """
 from zlib import compress
 from binascii import crc32
